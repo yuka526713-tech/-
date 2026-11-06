@@ -1,0 +1,642 @@
+<title>ゆきたび</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: a plain, bright accommodation-search site (prop for filming): top search → results → hotel detail → plans → booking → confirmation. One light look on purpose. */
+:root{
+  color-scheme:light;
+  --brand:#1556B8; --brand-d:#0E3F8E; --brand-l:#EAF1FD; --accent:#E5500B; --star:#F2A20C;
+  --ink:#1F2933; --muted:#667085; --line:#E1E5EA; --bg:#F4F6F9; --surface:#FFFFFF; --ok:#13804F; --alert:#C8281E;
+  --font:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.7;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:70}
+h1,h2,h3,h4,p,ul{margin:0}
+ul{padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #7DB0FF;outline-offset:2px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+svg.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* header */
+.hd{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:var(--surface);border-bottom:1px solid var(--line)}
+.hd .wrap{display:flex;align-items:center;gap:16px;height:56px}
+.back{display:inline-flex;align-items:center;gap:2px;border:0;background:none;color:var(--brand);font-weight:700;font-size:14px;padding:6px 10px 6px 2px;margin-right:-6px;border-radius:6px;white-space:nowrap}
+.back[hidden]{display:none}
+.back svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.back:hover{background:var(--brand-l)}
+.bbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:21px;letter-spacing:.04em;color:var(--brand);white-space:nowrap}
+.logo i{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center}
+.logo svg{width:19px;height:19px}
+.hdnav{margin-left:auto;display:flex;gap:4px;align-items:center;font-size:13px}
+.hdnav a,.hdnav span{padding:6px 10px;border-radius:6px;color:#3b4654;white-space:nowrap}
+.hdnav .join{background:var(--brand);color:#fff;font-weight:500}
+.hdnav .auth{display:flex;gap:4px;align-items:center;position:relative}
+.me{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 12px 3px 3px;font-size:13px;color:var(--ink);cursor:pointer;margin-left:4px}
+.me:hover{background:var(--brand-l)}
+.me i{width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:13px;flex:none}
+.me .nm{font-weight:600;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me .pt{color:var(--accent);font-weight:700;font-size:12px;white-space:nowrap}
+.hdnav .menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(8,25,60,.18);min-width:220px;padding:6px;z-index:70}
+.menu .mh{padding:8px 10px 10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.menu .mh b{display:block;font-size:14px}
+.menu .mh small{color:var(--muted);font-size:12px}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 10px;border-radius:6px;font-size:13px;color:var(--ink);cursor:pointer}
+.menu button:hover{background:var(--brand-l)}
+.menu button[data-logout]{color:var(--alert)}
+label.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink);cursor:pointer}
+label.chk input{margin-top:3px;flex:none}
+
+/* buttons / fields */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:8px;padding:0 22px;border:0;background:var(--accent);color:#fff;font-weight:700;font-size:15px;white-space:nowrap}
+.btn:hover{filter:brightness(1.06)}
+.btn.blue{background:var(--brand)}
+.btn.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink);font-weight:500}
+.btn.sm{height:36px;padding:0 14px;font-size:13px}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld label{font-size:12px;color:var(--muted);font-weight:500}
+.fld input,.fld select,.fld textarea{height:44px;border:1px solid #CBD2DA;background:#fff;border-radius:8px;padding:0 12px;width:100%;min-width:0}
+.fld textarea{height:84px;padding:10px 12px;resize:vertical}
+.req{background:var(--alert);color:#fff;font-size:11px;border-radius:3px;padding:0 5px;margin-left:6px;font-weight:500}
+
+/* home */
+.hero{position:relative;isolation:isolate;background:#8fbbe0;color:#fff}
+.hero .art{position:absolute;inset:0;z-index:-1}
+.hero .art svg,.hero .art img{width:100%;height:100%;display:block}
+.hero .art img{object-fit:cover}
+.hero.hasph .art::after{background:linear-gradient(90deg,rgba(8,25,60,.6),rgba(8,25,60,.28) 62%,rgba(8,25,60,.1)),linear-gradient(180deg,rgba(8,25,60,.22),rgba(8,25,60,0) 55%)}
+.hero .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,30,70,.35),rgba(10,30,70,.1) 60%,rgba(10,30,70,.25))}
+.hero .wrap{padding-block:36px 40px}
+.hero h1{text-wrap:balance;font-size:clamp(24px,4.4vw,38px);font-weight:700;line-height:1.4;text-shadow:0 2px 14px rgba(8,25,60,.5)}
+.hero p.lead{margin-top:6px;font-size:15px;text-shadow:0 1px 10px rgba(8,25,60,.5)}
+.sbox{margin-top:22px;background:var(--surface);color:var(--ink);border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(8,25,60,.25)}
+.sgrid{display:grid;grid-template-columns:1.5fr 1.1fr .7fr .8fr auto;gap:10px;align-items:end}
+.sbox.compact{margin-top:0;box-shadow:none;border:1px solid var(--line);padding:12px}
+.sec{padding-block:30px 6px}
+.sec h2{font-size:20px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec h2::before{content:"";width:5px;height:20px;border-radius:3px;background:var(--brand)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tile{position:relative;border-radius:10px;overflow:hidden;min-height:128px;display:flex;align-items:flex-end;color:#fff;background:#24407a;border:0;padding:0;text-align:left;isolation:isolate}
+.tile .art{position:absolute;inset:0;z-index:-1}
+.tile .art svg,.tile .art img{width:100%;height:100%;display:block}
+.tile .art img{object-fit:cover}
+.tile .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.65))}
+.tile b{display:block;padding:10px 12px;font-size:15px;line-height:1.45}
+.areas{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.areas button{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 8px;text-align:left;line-height:1.4}
+.areas button b{display:block;font-size:14px}
+.areas button span{font-size:11.5px;color:var(--muted)}
+.areas button:hover{border-color:var(--brand);background:var(--brand-l)}
+.rank{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.rk{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:block;text-align:left;padding:0}
+.rk .ph{display:block;aspect-ratio:4/3;position:relative}
+.rk .ph svg,.rk .ph img{width:100%;height:100%;display:block;object-fit:cover}
+.rk .no{position:absolute;left:0;top:0;background:var(--brand);color:#fff;font-weight:700;min-width:28px;height:28px;display:grid;place-items:center;border-radius:0 0 8px 0}
+.rk:nth-child(1) .no{background:#D4A017}.rk:nth-child(2) .no{background:#8D96A3}.rk:nth-child(3) .no{background:#B87333}
+.rk .bd{display:block;padding:8px 10px 10px}
+.rk b{display:block;font-size:13.5px;line-height:1.45}
+.rk small{display:block;color:var(--muted);font-size:12px}
+.rk .pp{display:block;margin-top:2px;color:var(--accent);font-weight:700}
+.rate{display:inline-flex;align-items:center;gap:4px;font-weight:700}
+.rate svg{width:15px;height:15px;fill:var(--star);stroke:none}
+.rate small{font-weight:400;color:var(--muted);font-size:12px}
+
+/* list */
+.crumb{font-size:12px;color:var(--muted);padding-block:14px 8px}
+.crumb a{color:var(--brand)}
+.ttl{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.ttl h1{font-size:22px;font-weight:700}
+.ttl span{color:var(--muted)}
+.fbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.chip{border:1px solid #CBD2DA;background:#fff;border-radius:999px;padding:3px 14px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+.fbar select{height:36px;border:1px solid #CBD2DA;border-radius:8px;background:#fff;padding:0 8px}
+.fbar .sp{margin-left:auto}
+.hc{display:grid;grid-template-columns:300px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.hc .ph{position:relative;display:block;min-height:210px;background:#d9e3f0}
+.hc .ph svg,.hc .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hc .bd{padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:8px 18px;min-width:0}
+.hc h3{font-size:18px;font-weight:700;line-height:1.45;color:var(--brand-d)}
+.hc .sub{color:var(--muted);font-size:12.5px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tg{font-size:11.5px;background:var(--brand-l);color:var(--brand-d);border-radius:4px;padding:0 7px}
+.hc .main{min-width:0}
+.hc .pr{text-align:right;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;min-width:170px}
+.pr .lb{font-size:11.5px;color:var(--muted)}
+.pr .yen{color:var(--accent);font-weight:700;font-size:24px;line-height:1.2;font-variant-numeric:tabular-nums}
+.pr .yen small{font-size:12px;font-weight:500;margin-left:2px}
+.pr .tot{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.left{display:inline-block;background:#FDECEA;color:var(--alert);font-size:12px;font-weight:700;border-radius:4px;padding:0 8px;align-self:flex-end}
+.pr .btn{margin-top:6px;height:40px;font-size:14px}
+.empty{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:36px 16px;text-align:center;color:var(--muted)}
+
+/* detail */
+.gal{display:grid;grid-template-columns:2fr 1fr;gap:6px;border-radius:10px;overflow:hidden}
+.gal .big{aspect-ratio:16/10;position:relative;background:#d9e3f0}
+.gal .big svg,.gal .big img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.gal .th{display:grid;grid-template-rows:repeat(4,1fr);gap:6px}
+.gal .th button{position:relative;border:0;padding:0;background:#d9e3f0;overflow:hidden;min-height:60px}
+.gal .th button[aria-current="true"]{outline:3px solid var(--brand);outline-offset:-3px}
+.gal .th svg,.gal .th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.gal .cap{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11.5px;padding:0 8px;border-radius:4px;z-index:2}
+.dh{padding-block:14px 8px;display:grid;gap:4px}
+.dh h1{font-size:25px;font-weight:700;line-height:1.4}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-top:14px}
+.card h2{font-size:18px;font-weight:700;margin-bottom:10px}
+.plan .pr{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:210px;text-align:right}
+.plan .pr .btn{margin-top:6px;height:42px}
+.plan{display:grid;grid-template-columns:1fr auto;gap:8px 28px;padding:14px 0;border-top:1px solid var(--line)}
+.plan:first-of-type{border-top:0;padding-top:4px}
+.plan h3{font-size:15.5px;font-weight:700;line-height:1.5}
+.plan ul{font-size:12.5px;color:var(--muted);margin-top:4px;display:grid;gap:1px}
+.dl{display:grid;grid-template-columns:8em 1fr;gap:6px 14px;font-size:13.5px}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0}
+.rv{padding:12px 0;border-top:1px solid var(--line)}
+.rv:first-of-type{border-top:0}
+.rv .who{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.rv p{margin-top:4px}
+.stk{display:none}
+
+/* booking */
+.cols{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+.form{display:grid;gap:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sum dl{margin:0;display:grid;gap:8px;font-size:13.5px}
+.sum .line{display:flex;justify-content:space-between;gap:12px}
+.sum .total{border-top:1px solid var(--line);padding-top:10px;margin-top:4px;font-weight:700;font-size:16px}
+.sum .total b{color:var(--accent);font-size:22px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;font-size:12px;color:var(--muted);margin:6px 0 14px;flex-wrap:wrap}
+.steps span{padding:2px 12px;border-radius:999px;background:#E9EDF3}
+.steps .on{background:var(--brand);color:#fff;font-weight:700}
+.done{text-align:center;padding:30px 16px}
+.done .ok{width:56px;height:56px;border-radius:50%;background:#E5F5EC;color:var(--ok);display:grid;place-items:center;margin:0 auto 10px}
+.done .ok svg{width:30px;height:30px;stroke-width:2.4}
+.done h1{font-size:22px}
+.no2{display:inline-block;margin-top:10px;background:var(--bg);border:1px dashed #B9C2CE;border-radius:8px;padding:6px 18px;font-size:18px;font-weight:700;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.done .card{text-align:left;max-width:640px;margin-inline:auto}
+
+footer{margin-top:40px;background:#fff;border-top:1px solid var(--line);padding-block:22px 28px;color:var(--muted);font-size:12px}
+footer .wrap{display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center}
+footer button{background:none;border:0;color:#98A2B3;font-size:11.5px;padding:2px 4px;text-decoration:underline}
+
+/* edit panel */
+.ov{position:fixed;inset:0;z-index:100;background:rgba(10,20,40,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));overflow-y:auto}
+.ov[hidden]{display:none}
+.sheet{background:#fff;border-radius:14px;max-width:640px;width:100%;margin:auto;padding:18px 18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.sheet h2{font-size:18px;margin-bottom:4px}
+.sheet .help{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.ed{display:grid;gap:12px}
+.ph4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ph4 .slot{border:1px solid var(--line);border-radius:8px;padding:6px;display:grid;gap:6px;font-size:12px;text-align:center}
+.ph4 .slot .pv{aspect-ratio:4/3;border-radius:6px;overflow:hidden;background:#d9e3f0}
+.ph4 .slot .pv img,.ph4 .slot .pv svg{width:100%;height:100%;object-fit:cover;display:block}
+.ph4 .slot label{border:1px solid var(--line);border-radius:6px;padding:2px 0;cursor:pointer;background:#fff;font-size:12px}
+.ph4 .slot button{border:0;background:none;color:var(--alert);font-size:12px;padding:0}
+.ph4 input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.ph4.ph5{grid-template-columns:repeat(5,1fr)}
+.sheet .sub{font-size:12px;color:var(--muted);font-weight:500;display:block;margin-bottom:4px}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#222;color:#fff;padding:8px 18px;border-radius:999px;z-index:120;font-size:13px}
+.toast[hidden]{display:none}
+
+.steam{animation:steam 7s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes steam{0%,100%{transform:translateY(0) scale(1);opacity:.55}50%{transform:translateY(-6px) scale(1.1);opacity:.25}}
+@media (prefers-reduced-motion:reduce){.steam{animation:none}}
+
+@media (max-width:900px){
+  .sgrid{grid-template-columns:1fr 1fr}.sgrid .btn{grid-column:1/-1}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .areas{grid-template-columns:repeat(3,1fr)}
+  .rank{display:flex;overflow-x:auto;gap:10px;scroll-snap-type:x mandatory;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));scroll-padding-inline:max(16px,env(safe-area-inset-left,0px));padding-bottom:6px}
+  .rk{flex:0 0 62%;scroll-snap-align:start}
+  .cols{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .hdnav span,.hdnav .hide-m{display:none}
+  .me .nm{display:none}
+  .me{padding-right:10px;margin-left:0}
+  .hc{grid-template-columns:1fr}
+  .hc .ph{min-height:0;aspect-ratio:16/10}
+  .hc .bd{grid-template-columns:1fr;padding:12px 14px}
+  .hc .pr{text-align:left;min-width:0;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+  .hc .pr .btn{width:100%;margin-top:6px}
+  .left{align-self:center}
+  .gal{grid-template-columns:1fr}
+  .gal .th{grid-template-rows:none;grid-template-columns:repeat(4,1fr)}
+  .gal .th button{aspect-ratio:4/3;min-height:0}
+  .dl{grid-template-columns:6.5em 1fr}
+  .plan{grid-template-columns:1fr}
+  .plan .pr{text-align:left;min-width:0;align-items:flex-start}
+  .plan .pr .btn{width:100%}
+  .stk{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:55;background:#fff;border-top:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));align-items:center;justify-content:space-between;gap:12px}
+  .stk .yen{color:var(--accent);font-weight:700;font-size:20px;line-height:1.2}
+  .stk .lb{font-size:11px;color:var(--muted);display:block}
+  body.has-stk footer{padding-bottom:84px}
+  .row2{grid-template-columns:1fr}
+  .ph4,.ph4.ph5{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:480px){.tiles{grid-template-columns:1fr 1fr}.sgrid{grid-template-columns:1fr}.areas{grid-template-columns:repeat(2,1fr)}.logo{font-size:19px}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></symbol>
+    <symbol id="i-flake" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.8L12 6l2.5-2.2M9.5 20.2L12 18l2.5 2.2"/></g></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></g></symbol>
+  </defs>
+</svg>
+
+<header class="hd"><div class="wrap">
+  <button type="button" class="back" id="hdBack" aria-label="前の画面に戻る" hidden><svg><use href="#i-back"/></svg>戻る</button>
+  <a class="logo" href="#" id="logo" aria-label="トップへ"><i><svg class="ic"><use href="#i-flake"/></svg></i><span id="siteName">ゆきたび</span></a>
+  <nav class="hdnav" aria-label="メニュー"><span>宿泊予約</span><span>クチコミ</span><span>予約の確認</span><div class="auth" id="hdAuth"><a href="#" class="hide-m" id="hdLogin">ログイン</a><a href="#" class="join hide-m" id="hdJoin">会員登録</a></div></nav>
+</div></header>
+
+<main id="app"></main>
+
+<footer><div class="wrap"><span id="foot">© ゆきたび　このサイトは架空のサービスです。</span><button type="button" id="editBtn">撮影用設定</button></div></footer>
+
+<div class="ov" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="edTitle"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
+
+/* ---------- illustrated placeholder pictures (replace with real photos in 撮影用設定) ---------- */
+const MOODS={
+ day:{sky:['#8fbbe0','#ebf4fb'],far:'#b6cde4',mid:'#8eabcb',near:'#5d7da3',snow:'#ffffff',glow:'#ffcf72'},
+ dusk:{sky:['#4b5b99','#e7b1a0'],far:'#8f86ae',mid:'#6c6798',near:'#434579',snow:'#fbf1f3',glow:'#ffc562'},
+ dawn:{sky:['#7f96c8','#f6d3c4'],far:'#a7a3c4',mid:'#7f7cae',near:'#555794',snow:'#fff5f2',glow:'#ffd283'}
+};
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let s=seed||1;return()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}
+const f1=n=>n.toFixed(1);
+function sceneOutside(id,mood,o){
+  o=o||{};const M=MOODS[mood]||MOODS.day,W=400,H=250,R=rng(hash(id)),gid='g'+hash(id);
+  const ridge=(b,a,n)=>{const p=[];for(let i=0;i<=n;i++)p.push([W*i/n,b-a*(.3+.7*R())*(i%2?.78:1)]);return p};
+  const poly=(p,c)=>`<polygon points="${p.map(q=>f1(q[0])+','+f1(q[1])).join(' ')} ${W},${H} 0,${H}" fill="${c}"/>`;
+  const cap=(p,c)=>`<polygon points="${p.map(q=>f1(q[0])+','+f1(q[1])).join(' ')} ${p.slice().reverse().map(q=>f1(q[0])+','+f1(q[1]+7+R()*14)).join(' ')}" fill="${c}" opacity=".9"/>`;
+  const far=ridge(H*(.5+(o.sink||0)),H*.3,7),mid=ridge(H*(.62+(o.sink||0)*.8),H*.22,9),gy=H*(.76+(o.sink||0)*.6);
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${M.sky[0]}"/><stop offset="1" stop-color="${M.sky[1]}"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#${gid})"/>`;
+  s+=poly(far,M.far)+cap(far,M.snow)+poly(mid,M.mid)+cap(mid,M.snow);
+  s+=`<path d="M0 ${f1(gy)} Q ${f1(W*.3)} ${f1(gy-H*.05)} ${f1(W*.55)} ${f1(gy-H*.01)} T ${W} ${f1(gy-H*.03)} V${H} H0Z" fill="${M.snow}"/>`;
+  // inn building
+  const bw=o.big?150:130,bx=W*(.18+R()*.5),by=H*.86,bh=H*.2;
+  s+=`<rect x="${f1(bx)}" y="${f1(by-bh)}" width="${bw}" height="${f1(bh)}" fill="#6b4f3a"/><rect x="${f1(bx+6)}" y="${f1(by-bh-16)}" width="${bw-12}" height="16" fill="#3d4a5c"/><polygon points="${f1(bx-8)},${f1(by-bh-16)} ${f1(bx+bw/2)},${f1(by-bh-46)} ${f1(bx+bw+8)},${f1(by-bh-16)}" fill="${M.snow}"/>`;
+  for(let k=0;k<6;k++){s+=`<rect x="${f1(bx+10+k*((bw-20)/6))}" y="${f1(by-bh+8)}" width="12" height="${f1(bh*.45)}" fill="${M.glow}" opacity=".9"/>`}
+  s+=`<rect x="${f1(bx+bw/2-9)}" y="${f1(by-bh*.42)}" width="18" height="${f1(bh*.42)}" fill="#2c2318"/>`;
+  s+=`<g class="steam"><ellipse cx="${f1(bx+bw+16)}" cy="${f1(by-bh-26)}" rx="10" ry="12" fill="#fff" opacity=".45"/></g>`;
+  for(let i=0;i<22;i++)s+=`<circle cx="${f1(R()*W)}" cy="${f1(R()*H*.8)}" r="${f1(.7+R()*1.1)}" fill="#fff" opacity="${f1(.4+R()*.45)}"/>`;
+  return s+'</svg>';
+}
+function sceneBath(id){
+  const R=rng(hash(id)),W=400,H=250,gid='b'+hash(id);
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9d4ec"/><stop offset="1" stop-color="#f1f6fa"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#${gid})"/>`;
+  for(let i=0;i<9;i++){const x=20+i*44+R()*14,h=60+R()*50,y=150;s+=`<polygon points="${f1(x)},${y} ${f1(x+22)},${f1(y-h)} ${f1(x+44)},${y}" fill="#2f5d50"/><polygon points="${f1(x+9)},${f1(y-h+26)} ${f1(x+22)},${f1(y-h)} ${f1(x+35)},${f1(y-h+26)}" fill="#fff" opacity=".92"/>`}
+  s+=`<rect y="150" width="${W}" height="100" fill="#f7fafc"/><ellipse cx="200" cy="188" rx="165" ry="46" fill="#7d8791"/><ellipse cx="200" cy="184" rx="152" ry="38" fill="#7cc3d6"/><ellipse cx="190" cy="180" rx="110" ry="24" fill="#a6dcea" opacity=".7"/>`;
+  for(let i=0;i<16;i++){const a=i/16*6.283,x=200+Math.cos(a)*158,y=190+Math.sin(a)*43,r=7+R()*6;s+=`<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#9aa1aa"/><ellipse cx="${f1(x)}" cy="${f1(y-r*.55)}" rx="${f1(r*.8)}" ry="${f1(r*.35)}" fill="#fff"/>`}
+  for(let k=0;k<3;k++)s+=`<g class="steam" style="animation-delay:${-k*2}s"><ellipse cx="${120+k*80}" cy="${150-k*8}" rx="26" ry="16" fill="#fff" opacity=".5"/></g>`;
+  for(let i=0;i<26;i++)s+=`<circle cx="${f1(R()*W)}" cy="${f1(R()*H)}" r="${f1(.7+R()*1.2)}" fill="#fff" opacity="${f1(.45+R()*.4)}"/>`;
+  return s+'</svg>';
+}
+function sceneRoom(id){
+  const R=rng(hash(id)),W=400,H=250;
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="${W}" height="${H}" fill="#efe5d0"/><rect y="150" width="${W}" height="100" fill="#cdbb8a"/>`;
+  for(let i=0;i<8;i++)s+=`<line x1="${i*57}" y1="150" x2="${i*57-30}" y2="250" stroke="#b8a672" stroke-width="2"/>`;
+  s+=`<rect x="110" y="26" width="180" height="118" fill="#7a5a3c"/><rect x="118" y="34" width="164" height="102" fill="#cfe2f2"/><polygon points="118,120 150,70 182,120" fill="#2f5d50"/><polygon points="170,120 214,56 258,120" fill="#2f5d50"/><polygon points="204,92 214,56 224,92" fill="#fff"/><polygon points="140,92 150,70 160,92" fill="#fff"/><rect x="118" y="120" width="164" height="16" fill="#fff"/><line x1="200" y1="34" x2="200" y2="136" stroke="#7a5a3c" stroke-width="4"/><line x1="118" y1="85" x2="282" y2="85" stroke="#7a5a3c" stroke-width="3"/>`;
+  s+=`<rect x="140" y="178" width="120" height="40" rx="4" fill="#6b4a2f"/><rect x="146" y="184" width="108" height="28" rx="2" fill="#8a6542"/><rect x="95" y="198" width="38" height="26" rx="4" fill="#9b3d3d"/><rect x="268" y="198" width="38" height="26" rx="4" fill="#9b3d3d"/><circle cx="200" cy="190" r="8" fill="#e8d8b4"/>`;
+  return s+'</svg>';
+}
+function sceneMeal(id){
+  const R=rng(hash(id)),W=400,H=250,cols=['#c0392b','#e8a33d','#6aa84f','#f3e9d2','#d97757','#8e6bbf'];
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><rect width="${W}" height="${H}" fill="#a5784f"/>`;
+  for(let i=0;i<7;i++)s+=`<rect y="${i*38}" width="${W}" height="1.5" fill="#8b6240" opacity=".5"/>`;
+  s+=`<rect x="70" y="26" width="260" height="198" rx="10" fill="#2a2420"/>`;
+  const sp=[[110,80,34],[200,70,28],[290,82,32],[130,168,36],[230,160,30],[300,170,26]];
+  sp.forEach((p,i)=>{s+=`<circle cx="${p[0]}" cy="${p[1]}" r="${p[2]}" fill="${i%2?'#f6f1e6':'#e9e2d0'}"/><circle cx="${p[0]}" cy="${p[1]}" r="${p[2]-8}" fill="#fff" opacity=".6"/>`;for(let k=0;k<4;k++)s+=`<circle cx="${f1(p[0]+(R()-.5)*p[2]*.9)}" cy="${f1(p[1]+(R()-.5)*p[2]*.9)}" r="${f1(4+R()*5)}" fill="${cols[Math.floor(R()*cols.length)]}"/>`});
+  return s+'</svg>';
+}
+const PH_LABEL=['外観','露天風呂','客室','お食事'];
+let photos=store.get('yukitabi-photos-v1',{});
+function pic(h,i,o){
+  const u=photos[h.id]&&photos[h.id][i];
+  if(u)return `<img src="${u}" alt="${esc(h.name)} ${PH_LABEL[i]}">`;
+  if(i===0)return sceneOutside(h.id,h.mood,o);
+  if(i===1)return sceneBath(h.id);
+  if(i===2)return sceneRoom(h.id);
+  return sceneMeal(h.id);
+}
+/* ホーム用の写真: [0]=トップの大きな画像, [1..4]=冬の温泉特集の4枚 (photos._home) */
+const HOME_LABEL=['トップ画像','特集① 雪見露天','特集② カニ','特集③ 客室露天','特集④ 1万円台'];
+function homeUrl(k){return photos._home&&photos._home[k]||''}
+function homePic(k,fallback){const u=homeUrl(k);return u?`<img src="${u}" alt="">`:fallback}
+
+/* ---------- data (fictional inns) ---------- */
+const BASE=[
+{id:'kusatsu',name:'雪あかりの宿 湯の花亭',area:'草津温泉',pref:'群馬県',mood:'dusk',rating:4.5,reviews:412,price:16500,tags:['雪見露天風呂','貸切風呂','大浴場','駅送迎'],
+ access:'JR長野原草津口駅からバスで約25分、草津温泉バスターミナルから徒歩5分（送迎あり）',desc:'湯畑まで歩いて5分。雪の夜は石畳が静まり返り、湯けむりがライトに浮かびます。源泉かけ流しの大浴場と、雪景色を望む露天風呂が自慢です。',eat:'上州の食材を使った会席'},
+{id:'ginzan',name:'雪灯り旅館 みかづき',area:'銀山温泉',pref:'山形県',mood:'dusk',rating:4.7,reviews:286,price:28500,tags:['雪見露天風呂','露天風呂付客室','貸切風呂'],
+ access:'山形新幹線 大石田駅からバスで約40分、銀山温泉バス停から徒歩3分',desc:'ガス灯がともる川沿いの木造旅館。全室から雪の温泉街を眺められます。夕暮れから夜にかけての景色をゆっくりお楽しみください。',eat:'山形牛と地のそばの会席'},
+{id:'zao',name:'樹氷の宿 ふぶき荘',area:'蔵王温泉',pref:'山形県',mood:'day',rating:4.2,reviews:538,price:11800,tags:['雪見露天風呂','大浴場','スキー場近く'],
+ access:'JR山形駅からバスで約40分、蔵王温泉バスターミナルから徒歩4分',desc:'ゲレンデまで歩いてすぐ。強酸性の湯で冷えた体を温められます。ロープウェイで行く樹氷観賞の拠点にも便利です。',eat:'蔵王ジンギスカンと山形の郷土料理'},
+{id:'nyuto',name:'茅葺の湯 こもれび庵',area:'乳頭温泉郷',pref:'秋田県',mood:'dawn',rating:4.6,reviews:174,price:19800,tags:['雪見露天風呂','貸切風呂','秘湯'],
+ access:'秋田新幹線 田沢湖駅からバスで約45分（冬季は宿の送迎あり）',desc:'深い雪に包まれた山あいの一軒宿。白く濁る湯と、雪をかぶった茅葺き屋根の景色が静かな時間をつくります。',eat:'山の芋鍋ときりたんぽ'},
+{id:'noboribetsu',name:'ゆげの里 地獄谷亭',area:'登別温泉',pref:'北海道',mood:'dusk',rating:4.3,reviews:702,price:14800,tags:['雪見露天風呂','大浴場','海鮮料理'],
+ access:'JR登別駅からバスで約15分、登別温泉バス停から徒歩2分',desc:'地獄谷を望む高台の宿。硫黄泉・食塩泉など異なる湯の大浴場をめぐれます。北海道の海の幸も人気です。',eat:'北海道の海鮮と蟹'},
+{id:'kinosaki',name:'柳小路 松葉の宿',area:'城崎温泉',pref:'兵庫県',mood:'dusk',rating:4.5,reviews:365,price:24800,tags:['カニ料理','外湯めぐり','露天風呂付客室'],
+ access:'JR城崎温泉駅から徒歩10分（駅まで送迎あり）',desc:'柳並木の通りに面した落ち着いた宿。浴衣と下駄で七つの外湯をめぐり、冬は松葉ガニの会席を味わえます。',eat:'松葉ガニの会席'},
+{id:'nozawa',name:'外湯の宿 あたたか荘',area:'野沢温泉',pref:'長野県',mood:'day',rating:4.1,reviews:221,price:9800,tags:['外湯めぐり','大浴場','スキー場近く'],
+ access:'北陸新幹線 飯山駅からバスで約25分、野沢温泉バス停から徒歩5分',desc:'外湯めぐりの拠点にちょうどいい、気取らない家族経営の宿。雪遊びとスキーのあとに湯でゆっくり温まれます。',eat:'信州の家庭料理と野沢菜'},
+{id:'yudanaka',name:'猿の湯 山ぼうし',area:'湯田中温泉',pref:'長野県',mood:'dawn',rating:4.4,reviews:198,price:15800,tags:['雪見露天風呂','貸切風呂','外湯めぐり'],
+ access:'長野電鉄 湯田中駅から徒歩8分（送迎あり）',desc:'雪の石畳を歩いて、地獄谷野猿公苑へ。宿には庭を望む露天風呂と、予約制の貸切風呂があります。',eat:'信州そばと地元野菜の小鉢'},
+{id:'gero',name:'湯けむり庵 こまくさ',area:'下呂温泉',pref:'岐阜県',mood:'day',rating:4.3,reviews:477,price:13800,tags:['大浴場','飛騨牛','駅送迎'],
+ access:'JR下呂駅から徒歩7分（送迎あり）',desc:'肌がなめらかになる「美人の湯」を、大浴場でたっぷり。夕食は飛騨牛の朴葉味噌焼きがおすすめです。',eat:'飛騨牛の朴葉味噌焼き'},
+{id:'okuhida',name:'北アルプス露天の宿 みはらし',area:'奥飛騨温泉郷',pref:'岐阜県',mood:'day',rating:4.6,reviews:309,price:22800,tags:['雪見露天風呂','露天風呂付客室','貸切風呂'],
+ access:'高山濃飛バスセンターからバスで約1時間、平湯温泉バス停から徒歩3分',desc:'北アルプスの雪景色を望む露天風呂が人気。全室に専用の露天風呂がある離れもご用意しています。',eat:'飛騨牛と川魚の囲炉裏会席'},
+{id:'beppu',name:'地獄蒸しの宿 いでゆ荘',area:'別府温泉',pref:'大分県',mood:'day',rating:4.2,reviews:615,price:8800,tags:['地獄蒸し料理','大浴場','駅送迎'],
+ access:'JR別府駅から車で約10分（送迎あり）',desc:'地獄蒸しの調理体験ができる湯治スタイルの宿。冬も暖かい九州で、湯けむりの街をのんびり歩けます。',eat:'地獄蒸しととり天'},
+{id:'hakone',name:'芦ノ湖畔の宿 ふじみ亭',area:'箱根温泉',pref:'神奈川県',mood:'day',rating:4.4,reviews:890,price:21800,tags:['露天風呂付客室','富士山眺望','大浴場'],
+ access:'箱根湯本駅からバスで約40分、元箱根港から徒歩5分（送迎あり）',desc:'空気が澄む冬は、湖の向こうに富士山がくっきり。客室の露天風呂から朝の景色を独り占めできます。',eat:'相模湾の魚と地の野菜の会席'}
+];
+const AREAS=BASE.map(h=>h.area);
+const FILTER_TAGS=['雪見露天風呂','露天風呂付客室','貸切風呂','カニ料理','駅送迎','大浴場'];
+const KIND={'露天風呂付客室':1.7};
+function ed(){return store.get('yukitabi-v1',{site:'ゆきたび',h:{}})}
+let EDIT=ed();
+/* ログイン状態 (撮影用設定で切り替え。初期値=ログイン済み) */
+function U(){return Object.assign({on:true,name:'山田 花子',kana:'ヤマダ ハナコ',tel:'090-1234-5678',mail:'hanako.yamada@example.com',points:1240},EDIT.user||{})}
+function applyUser(){
+  const u=U(),box=$('#hdAuth');if(!box)return;
+  if(!u.on){box.innerHTML='<a href="#" class="hide-m" id="hdLogin">ログイン</a><a href="#" class="join hide-m" id="hdJoin">会員登録</a>';return}
+  const nm=(u.name||'').trim()||'会員',ini=Array.from(nm)[0],pt=(+u.points||0).toLocaleString('ja-JP')+'pt';
+  box.innerHTML=`<button type="button" class="me" id="hdMe" aria-haspopup="true" aria-expanded="false"><i>${esc(ini)}</i><b class="nm">${esc(nm)}さん</b><small class="pt">${pt}</small></button><div class="menu" id="meMenu" hidden><div class="mh"><b>${esc(nm)}さん</b><small>${esc(EDIT.site||'ゆきたび')}会員　保有ポイント ${pt}</small></div><button type="button">マイページ</button><button type="button">予約の確認</button><button type="button">お気に入りの宿</button><button type="button">ポイント履歴</button><button type="button" data-logout>ログアウト</button></div>`;
+}
+function setUser(o){EDIT.user=Object.assign(U(),o);saveEdit();BK.touched=false;applyUser();render()}
+function H(id){const b=BASE.find(x=>x.id===id);if(!b)return null;const o=EDIT.h[id]||{};return Object.assign({},b,o.name?{name:o.name}:{},o.area?{area:o.area}:{},o.price>0?{price:+o.price}:{},o.rating>0?{rating:+o.rating}:{},o.reviews>0?{reviews:+o.reviews}:{})}
+const allH=()=>BASE.map(b=>H(b.id));
+function plans(h){
+  const seed=hash(h.id),r=n=>seed%n;
+  const crab=h.tags.includes('カニ料理');
+  const list=[
+    {id:'std',name:'【スタンダード】夕朝食付 基本プラン',price:h.price,room:'和室10畳（バス・トイレ付）',meal:'夕食：会場食／朝食：会場食',bath:'大浴場・露天風呂',left:2+r(4)},
+    {id:'sea',name:crab?'【松葉ガニ】かに会席を味わう 冬の人気プラン':'【冬のごちそう】季節の会席 グレードアップ プラン',price:Math.round(h.price*1.22/100)*100,room:'和室12畳（バス・トイレ付）',meal:'夕食：食事処（個室風）／朝食：食事処',bath:'大浴場・露天風呂',left:1+r(3)},
+    {id:'rot',name:'【露天風呂付客室】雪景色を独り占め 部屋食プラン',price:Math.round(h.price*1.7/100)*100,room:'露天風呂付和洋室',meal:'夕食：お部屋食／朝食：お部屋食',bath:'客室専用の露天風呂・大浴場',left:1+r(2)}
+  ];
+  return list;
+}
+function reviewsOf(h){
+  const T=[
+    ['雪景色を見ながら入る露天風呂が最高でした。冷たい空気と熱いお湯の組み合わせは冬だけの楽しみです。',5],
+    ['夕食の量も味も満足。スタッフの方が親切で、雪道の送迎もありがたかったです。',4.5],
+    ['部屋から'+h.area+'の景色が見えて、冬ならではの雰囲気を味わえました。また泊まりたいです。',4.5],
+    ['温泉は申し分なし。人気の宿なので、早めの予約をおすすめします。',4],
+    ['大浴場が広く、湯上がりの休憩スペースも快適でした。朝食のご飯がおいしかったです。',4.5],
+    ['静かでゆっくり過ごせました。雪の日は足もとに気をつけて。',4]
+  ];
+  const WHO=[['ゆうなさん','30代 女性','夫婦・カップル'],['taroさん','40代 男性','家族'],['みどりさん','50代 女性','友人'],['ケンさん','20代 男性','ひとり旅'],['ハナさん','30代 女性','家族']];
+  const MON=['2025年12月','2026年1月','2026年2月','2026年1月'];
+  const s=hash(h.id),out=[];
+  for(let k=0;k<3;k++){const t=T[(s+k*2)%T.length],w=WHO[(s+k)%WHO.length];out.push({t:t[0],sc:t[1]?Math.min(5,t[1]):4.5,who:w,mon:MON[(s+k)%MON.length]})}
+  return out;
+}
+
+/* ---------- search state ---------- */
+function defaultDate(){const d=new Date();d.setDate(d.getDate()+14);while(d.getDay()!==6)d.setDate(d.getDate()+1);return iso(d)}
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const WD='日月火水木金土';
+function fmt(isoStr){const [y,m,d]=isoStr.split('-').map(Number),w=new Date(y,m-1,d).getDay();return `${m}月${d}日(${WD[w]})`}
+function addDays(isoStr,n){const [y,m,d]=isoStr.split('-').map(Number),x=new Date(y,m-1,d+n);return iso(x)}
+let S=Object.assign({area:'',date:defaultDate(),nights:1,adults:2},store.get('yukitabi-search-v1',{}));
+if(!/^\d{4}-\d{2}-\d{2}$/.test(S.date))S.date=defaultDate();
+const saveS=()=>store.set('yukitabi-search-v1',S);
+let FL={tag:'',max:'',sort:'rec'};
+let BK={form:{name:'',kana:'',tel:'',mail:'',arrive:'15:00',memo:''},result:null};
+const stay=()=>`${fmt(S.date)}〜 ${S.nights}泊 大人${S.adults}名`;
+const total=(p)=>p*S.adults*S.nights;
+
+/* ---------- views ---------- */
+const app=$('#app');
+function rating(h,small){return `<span class="rate"><svg><use href="#i-star"/></svg>${h.rating.toFixed(1)}${small===false?'':`<small>（${h.reviews}件）</small>`}</span>`}
+function searchBox(compact){
+  const opts=['<option value="">すべての温泉地</option>'].concat(AREAS.map(a=>`<option${S.area===a?' selected':''}>${esc(a)}</option>`)).join('');
+  return `<form class="sbox${compact?' compact':''}" id="sf" role="search"><div class="sgrid">
+    <div class="fld"><label for="sArea">行き先（温泉地）</label><select id="sArea">${opts}</select></div>
+    <div class="fld"><label for="sDate">チェックイン</label><input id="sDate" type="date" value="${S.date}" required></div>
+    <div class="fld"><label for="sNights">泊数</label><select id="sNights">${[1,2,3].map(n=>`<option value="${n}"${S.nights===n?' selected':''}>${n}泊</option>`).join('')}</select></div>
+    <div class="fld"><label for="sAdults">大人</label><select id="sAdults">${[1,2,3,4,5,6].map(n=>`<option value="${n}"${S.adults===n?' selected':''}>${n}名</option>`).join('')}</select></div>
+    <button class="btn" type="submit"><svg class="ic"><use href="#i-search"/></svg>検索する</button></div></form>`;
+}
+function viewHome(){
+  const hs=allH(),top=hs.slice().sort((a,b)=>(b.rating*Math.log(b.reviews+10))-(a.rating*Math.log(a.reviews+10))).slice(0,5);
+  const T=[['雪見露天風呂の宿','tag','雪見露天風呂','ginzan'],['カニを味わう温泉宿','tag','カニ料理','kinosaki'],['露天風呂付き客室の宿','tag','露天風呂付客室','okuhida'],['1万円台から泊まれる宿','max','19999','zao']];
+  app.innerHTML=`<section class="hero${homeUrl(0)?' hasph':''}"><div class="art" aria-hidden="true">${homePic(0,sceneOutside('home-hero','day',{sink:.18,big:true}))}</div><div class="wrap"><h1>冬の温泉宿を、雪景色とともに。</h1><p class="lead">全国の温泉宿・旅館を比べて、そのまま予約できます。</p>${searchBox(false)}</div></section>
+  <div class="wrap">
+   <section class="sec"><h2>冬の温泉特集</h2><div class="tiles">${T.map((t,i)=>{const h=H(t[3]);return `<button type="button" class="tile" data-tile="${i}"><span class="art">${homePic(1+i,pic(h,0))}</span><b>${esc(t[0])}</b></button>`}).join('')}</div></section>
+   <section class="sec"><h2>人気の温泉エリア</h2><div class="areas">${hs.map(h=>`<button type="button" data-area="${esc(h.area)}"><b>${esc(h.area)}</b><span>${esc(h.pref)}</span></button>`).join('')}</div></section>
+   <section class="sec"><h2>今週の人気の宿</h2><div class="rank">${top.map((h,i)=>`<a class="rk" href="#hotel-${h.id}"><span class="ph">${pic(h,0)}<span class="no">${i+1}</span></span><span class="bd"><b>${esc(h.name)}</b><small>${esc(h.area)}</small>${rating(h)}<span class="pp">${yen(h.price)}〜</span></span></a>`).join('')}</div></section>
+  </div>`;
+  $('.tiles').__T=T;
+  document.body.classList.remove('has-stk');
+}
+function matches(h){
+  if(S.area&&h.area!==S.area)return false;
+  if(FL.tag&&!h.tags.includes(FL.tag))return false;
+  if(FL.max&&h.price>+FL.max)return false;
+  return true;
+}
+function viewList(){
+  let L=allH().filter(matches);
+  L.sort((a,b)=>FL.sort==='cheap'?a.price-b.price:FL.sort==='rate'?b.rating-a.rating:(b.rating*Math.log(b.reviews+10))-(a.rating*Math.log(a.reviews+10)));
+  const where=S.area?S.area:'全国の温泉地';
+  app.innerHTML=`<div class="wrap"><div class="crumb"><a href="#">トップ</a> ＞ 温泉宿の検索結果</div>
+  ${searchBox(true)}
+  <div class="ttl" style="margin-top:16px"><h1>${esc(where)}の宿・旅館</h1><span><b style="color:var(--ink)">${L.length}</b>件　${stay()}</span></div>
+  <div class="fbar" role="group" aria-label="絞り込み">${FILTER_TAGS.map(t=>`<button type="button" class="chip" data-tag="${esc(t)}" aria-pressed="${String(FL.tag===t)}">${esc(t)}</button>`).join('')}<button type="button" class="chip" data-max="19999" aria-pressed="${String(FL.max==='19999')}">1万円台まで</button>
+   <span class="sp"><label class="vh" for="fSort">並び替え</label><select id="fSort"><option value="rec"${FL.sort==='rec'?' selected':''}>おすすめ順</option><option value="cheap"${FL.sort==='cheap'?' selected':''}>料金が安い順</option><option value="rate"${FL.sort==='rate'?' selected':''}>評価が高い順</option></select></span></div>
+  ${L.length?L.map(h=>{const p=plans(h)[0],left=p.left;return `<article class="hc"><a class="ph" href="#hotel-${h.id}" aria-label="${esc(h.name)}の詳細">${pic(h,0)}</a>
+    <div class="bd"><div class="main"><h3><a href="#hotel-${h.id}">${esc(h.name)}</a></h3><p class="sub">${esc(h.area)}（${esc(h.pref)}）</p><p style="margin-top:4px">${rating(h)}</p><div class="tags">${h.tags.map(t=>`<span class="tg">${esc(t)}</span>`).join('')}</div><p class="sub" style="margin-top:8px">${esc(h.desc.slice(0,52))}…</p></div>
+    <div class="pr">${left<=2?`<span class="left">残り${left}室</span>`:''}<span class="lb">1泊2食付 大人1名あたり</span><span class="yen">${yen(p.price)}<small>〜（税込）</small></span><span class="tot">${S.adults}名${S.nights}泊 合計 ${yen(total(p.price))}</span><a class="btn" href="#hotel-${h.id}">プランを見る</a></div></div></article>`}).join(''):`<div class="empty"><p>条件に合う宿が見つかりませんでした。</p><p style="margin-top:10px"><button class="btn blue sm" type="button" id="resetF">絞り込みをクリア</button></p></div>`}
+  </div>`;
+  document.body.classList.remove('has-stk');
+}
+let galIdx=0;
+function viewHotel(id){
+  const h=H(id);if(!h){location.hash='';return}
+  const P=plans(h),min=P[0].price;galIdx=0;
+  app.innerHTML=`<div class="wrap"><div class="crumb"><a href="#">トップ</a> ＞ <a href="#list" data-area-link="${esc(h.area)}">${esc(h.area)}の宿</a> ＞ ${esc(h.name)}</div>
+  <div class="dh"><div class="tags" style="margin:0">${h.tags.slice(0,3).map(t=>`<span class="tg">${esc(t)}</span>`).join('')}</div><h1>${esc(h.name)}</h1><p class="sub" style="color:var(--muted)">${esc(h.area)}（${esc(h.pref)}）　${rating(h)}</p></div>
+  <div class="gal"><div class="big" id="galBig">${pic(h,0,{big:true})}<span class="cap" id="galCap">${PH_LABEL[0]}</span></div><div class="th">${[0,1,2,3].map(i=>`<button type="button" data-gal="${i}" aria-current="${i===0}" aria-label="${PH_LABEL[i]}の写真"><span class="cap">${PH_LABEL[i]}</span>${pic(h,i)}</button>`).join('')}</div></div>
+  <section class="card" id="plans"><h2>宿泊プラン・料金</h2><p class="sub" style="color:var(--muted);margin-bottom:6px">${stay()}（1泊2食付 大人1名あたりの料金・税込、入湯税別）</p>
+   ${P.map(p=>`<div class="plan"><div><h3>${esc(p.name)}</h3><ul><li>お部屋：${esc(p.room)}</li><li>お食事：${esc(p.meal)}</li><li>お風呂：${esc(p.bath)}</li></ul></div>
+     <div class="pr">${p.left<=2?`<span class="left">残り${p.left}室</span>`:''}<span class="yen">${yen(p.price)}<small>／1名</small></span><span class="tot">${S.adults}名${S.nights}泊 合計 ${yen(total(p.price))}</span><a class="btn" href="#book-${h.id}-${p.id}">このプランで予約</a></div></div>`).join('')}</section>
+  <section class="card"><h2>宿の特徴</h2><p>${esc(h.desc)}</p><dl class="dl" style="margin-top:12px"><dt>お風呂</dt><dd>${esc(h.tags.filter(t=>/風呂|浴場|外湯/.test(t)).join('、')||'大浴場')}</dd><dt>お食事</dt><dd>${esc(h.eat)}</dd><dt>アクセス</dt><dd>${esc(h.access)}</dd><dt>チェックイン</dt><dd>15:00〜（最終18:00）　チェックアウト 10:00</dd></dl></section>
+  <section class="card"><h2>クチコミ <span style="font-size:14px;font-weight:400;color:var(--muted)">総合 ${rating(h)}</span></h2>${reviewsOf(h).map(r=>`<div class="rv"><div class="who"><span class="rate"><svg><use href="#i-star"/></svg>${r.sc.toFixed(1)}</span><b style="color:var(--ink)">${esc(r.who[0])}</b><span>${esc(r.who[1])}／${esc(r.who[2])}／${esc(r.mon)}宿泊</span></div><p>${esc(r.t)}</p></div>`).join('')}</section>
+  </div>
+  <div class="stk"><div><span class="lb">1泊2食付 大人1名</span><span class="yen">${yen(min)}〜</span></div><a class="btn" href="#plans" data-go="plans">プランを見る</a></div>`;
+  document.body.classList.add('has-stk');
+}
+function viewBook(id,pid){
+  const h=H(id),p=h&&plans(h).find(x=>x.id===pid);if(!p){location.hash='';return}
+  const out=addDays(S.date,S.nights),t=total(p.price),u=U();
+  const F=(u.on&&!BK.touched)?Object.assign({},BK.form,{name:u.name,kana:u.kana,tel:u.tel,mail:u.mail}):BK.form;
+  app.innerHTML=`<div class="wrap"><div class="crumb"><a href="#">トップ</a> ＞ <a href="#hotel-${h.id}">${esc(h.name)}</a> ＞ ご予約</div>
+  <div class="steps"><span>1 プラン選択</span><span class="on">2 お客様情報</span><span>3 予約完了</span></div>
+  <div class="cols"><form class="card form" id="bf" style="margin-top:0"><h2>お客様情報の入力</h2>${u.on&&!BK.touched?`<p class="sub" style="color:var(--ok);font-size:12.5px;margin:-4px 0 8px">会員情報から入力しました。内容は変更できます。</p>`:''}
+   <div class="row2"><div class="fld"><label for="bName">お名前<span class="req">必須</span></label><input id="bName" value="${esc(F.name)}" placeholder="例）山田 花子" required autocomplete="off"></div><div class="fld"><label for="bKana">フリガナ<span class="req">必須</span></label><input id="bKana" value="${esc(F.kana)}" placeholder="例）ヤマダ ハナコ" required autocomplete="off"></div></div>
+   <div class="row2"><div class="fld"><label for="bTel">電話番号<span class="req">必須</span></label><input id="bTel" type="tel" value="${esc(F.tel)}" placeholder="例）090-0000-0000" required autocomplete="off"></div><div class="fld"><label for="bMail">メールアドレス<span class="req">必須</span></label><input id="bMail" type="email" value="${esc(F.mail)}" placeholder="例）example@mail.com" required autocomplete="off"></div></div>
+   <div class="fld"><label for="bArr">到着予定時刻</label><select id="bArr">${['15:00','16:00','17:00','18:00'].map(x=>`<option${F.arrive===x?' selected':''}>${x}</option>`).join('')}</select></div>
+   <div class="fld"><label for="bMemo">宿へのご要望（任意）</label><textarea id="bMemo" placeholder="例）記念日のお祝いです">${esc(F.memo)}</textarea></div>
+   <p class="sub" style="color:var(--muted);font-size:12px">お支払いは現地でのお支払いです。</p>
+   <button class="btn" type="submit" style="height:50px">予約を確定する</button><button class="btn ghost" type="button" data-back style="height:44px">‹ プラン選択に戻る</button></form>
+   <aside class="card sum" style="margin-top:0"><h2 style="font-size:16px">ご予約内容</h2><dl>
+    <div><b>${esc(h.name)}</b><br><span style="color:var(--muted)">${esc(h.area)}（${esc(h.pref)}）</span></div>
+    <div style="color:var(--muted)">${esc(p.name)}</div>
+    <div class="line"><span>チェックイン</span><span>${fmt(S.date)} 15:00〜</span></div>
+    <div class="line"><span>チェックアウト</span><span>${fmt(out)} 10:00</span></div>
+    <div class="line"><span>人数</span><span>大人${S.adults}名</span></div>
+    <div class="line"><span>お部屋</span><span>${esc(p.room)}</span></div>
+    <div class="line"><span>${yen(p.price)} × ${S.adults}名 × ${S.nights}泊</span><span>${yen(t)}</span></div>
+    <div class="line total"><span>お支払い合計（税込）</span><b>${yen(t)}</b></div>${u.on?`<div class="line"><span>獲得予定ポイント</span><span>${Math.floor(t*0.01).toLocaleString('ja-JP')}pt</span></div>`:''}</dl></aside></div></div>`;
+  document.body.classList.remove('has-stk');
+}
+function viewDone(){
+  const r=BK.result;if(!r){location.hash='';return}
+  const h=H(r.id),p=plans(h).find(x=>x.id===r.pid);
+  app.innerHTML=`<div class="wrap"><div class="steps" style="margin-top:18px"><span>1 プラン選択</span><span>2 お客様情報</span><span class="on">3 予約完了</span></div><div class="done"><div class="ok"><svg class="ic"><use href="#i-check"/></svg></div><h1>ご予約を承りました</h1><p style="color:var(--muted);margin-top:4px">${esc(r.mail)} に、予約内容の確認メールをお送りしました。</p><div class="no2">予約番号　${esc(r.no)}</div>
+   <div class="card" style="margin-top:20px"><h2 style="font-size:16px">ご予約内容</h2><dl class="dl"><dt>宿泊施設</dt><dd>${esc(h.name)}（${esc(h.area)}）</dd><dt>プラン</dt><dd>${esc(p.name)}</dd><dt>宿泊日</dt><dd>${fmt(r.date)}〜 ${r.nights}泊（チェックアウト ${fmt(addDays(r.date,r.nights))}）</dd><dt>人数</dt><dd>大人${r.adults}名</dd><dt>お名前</dt><dd>${esc(r.name)} 様</dd><dt>到着予定</dt><dd>${esc(r.arrive)}</dd><dt>お支払い</dt><dd>現地払い　${yen(p.price*r.adults*r.nights)}（税込）</dd></dl></div>
+   <div class="bbar" style="justify-content:center;margin-top:20px"><button type="button" class="btn ghost" data-back>‹ 前の画面に戻る</button><a class="btn blue" href="#">トップへ戻る</a></div></div></div>`;
+  document.body.classList.remove('has-stk');
+}
+function parse(){const h=location.hash.slice(1);let m;
+  if((m=h.match(/^hotel-([a-z]+)$/)))return{v:'hotel',id:m[1]};
+  if((m=h.match(/^book-([a-z]+)-([a-z]+)$/)))return{v:'book',id:m[1],pid:m[2]};
+  if(h==='list')return{v:'list'};if(h==='done')return{v:'done'};if(h==='plans')return{v:'keep'};return{v:'home'}}
+let lastRoute='';
+function render(){
+  const r=parse();if(r.v==='keep')return;
+  const key=location.hash;$('#hdBack').hidden=(r.v==='home');
+  if(r.v==='home')viewHome();else if(r.v==='list')viewList();else if(r.v==='hotel')viewHotel(r.id);else if(r.v==='book')viewBook(r.id,r.pid);else viewDone();
+  if(key!==lastRoute){window.scrollTo(0,0)}lastRoute=key;
+}
+const normH=()=>location.hash.replace(/^#$/,'');
+let navStack=[normH()];
+function onNav(){const h=normH(),n=navStack.length;if(n>1&&navStack[n-2]===h)navStack.pop();else if(navStack[n-1]!==h)navStack.push(h);render()}
+addEventListener('hashchange',onNav);
+function goBack(){
+  const n=navStack.length;
+  if(n>1){location.hash=navStack[n-2].replace(/^#/,'');return}
+  const r=parse(),t=r.v==='hotel'?'list':r.v==='book'?'hotel-'+r.id:'';
+  navStack=[t?'#'+t:''];
+  if(normH()===(t?'#'+t:''))render();else location.hash=t;
+}
+
+/* ---------- events ---------- */
+function go(h){if(location.hash.slice(1)===h)render();else location.hash=h}
+document.addEventListener('submit',e=>{
+  if(e.target.id==='sf'){e.preventDefault();S.area=$('#sArea').value;S.date=$('#sDate').value||S.date;S.nights=+$('#sNights').value;S.adults=+$('#sAdults').value;saveS();FL={tag:'',max:'',sort:FL.sort};go('list');return}
+  if(e.target.id==='bf'){e.preventDefault();const r=parse(),F=BK.form;BK.touched=true;F.name=$('#bName').value.trim();F.kana=$('#bKana').value.trim();F.tel=$('#bTel').value.trim();F.mail=$('#bMail').value.trim();F.arrive=$('#bArr').value;F.memo=$('#bMemo').value;
+    const d=new Date(),no='YT'+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,'0')+'-'+String(Math.floor(10000+Math.random()*89999));
+    BK.result=Object.assign({id:r.id,pid:r.pid,date:S.date,nights:S.nights,adults:S.adults,no},F);go('done')}
+});
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const me=t.closest('#hdMe');if(me){const m=$('#meMenu');m.hidden=!m.hidden;me.setAttribute('aria-expanded',String(!m.hidden));return}
+  const mi=t.closest('#meMenu button');if(mi){if(mi.hasAttribute('data-logout'))setUser({on:false});else $('#meMenu').hidden=true;return}
+  if(!t.closest('#hdAuth')){const m=$('#meMenu');if(m){m.hidden=true;$('#hdMe').setAttribute('aria-expanded','false')}}
+  if(t.closest('#logo')||t.closest('#hdLogin')||t.closest('#hdJoin')){e.preventDefault();if(t.closest('#logo'))go('');else if(t.closest('#hdLogin'))setUser({on:true});return}
+  if(t.closest('#hdBack')||t.closest('[data-back]')){e.preventDefault();goBack();return}
+  const tl=t.closest('[data-tile]');if(tl){const T=$('.tiles').__T[+tl.dataset.tile];S.area='';saveS();FL={tag:T[1]==='tag'?T[2]:'',max:T[1]==='max'?T[2]:'',sort:'rec'};go('list');return}
+  const ar=t.closest('[data-area]');if(ar){S.area=ar.dataset.area;saveS();FL={tag:'',max:'',sort:FL.sort};go('list');return}
+  const al=t.closest('[data-area-link]');if(al){S.area=al.dataset.areaLink;saveS();return}
+  const tg=t.closest('[data-tag]');if(tg){FL.tag=FL.tag===tg.dataset.tag?'':tg.dataset.tag;viewList();return}
+  const mx=t.closest('[data-max]');if(mx){FL.max=FL.max===mx.dataset.max?'':mx.dataset.max;viewList();return}
+  if(t.closest('#resetF')){FL={tag:'',max:'',sort:'rec'};S.area='';saveS();viewList();return}
+  const gl=t.closest('[data-gal]');if(gl){const i=+gl.dataset.gal,h=H(parse().id);$('#galBig').innerHTML=pic(h,i,{big:true})+`<span class="cap" id="galCap">${PH_LABEL[i]}</span>`;$$('[data-gal]').forEach(b=>b.setAttribute('aria-current',String(b===gl)));return}
+  const gp=t.closest('[data-go="plans"]');if(gp){e.preventDefault();$('#plans').scrollIntoView({block:'start'});return}
+  if(t.closest('#editBtn')){openEdit();return}
+  if(t===$('#ov'))closeEdit();
+});
+document.addEventListener('change',e=>{if(e.target.id==='fSort'){FL.sort=e.target.value;viewList()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeEdit()});
+
+/* ---------- 撮影用設定 ---------- */
+const ov=$('#ov'),sheet=$('#sheet');let edId=BASE[0].id,lastF=null;
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
+function saveEdit(){if(!store.set('yukitabi-v1',EDIT))toast('保存できませんでした')}
+function applySite(){$('#siteName').textContent=EDIT.site||'ゆきたび';$('#foot').textContent='© '+(EDIT.site||'ゆきたび')+'　このサイトは架空のサービスです。'}
+function openEdit(){lastF=document.activeElement;paintEdit();ov.hidden=false;document.documentElement.style.overflow='hidden';const f=$('#edSite');f&&f.focus()}
+function closeEdit(){if(ov.hidden)return;ov.hidden=true;document.documentElement.style.overflow='';sheet.innerHTML='';BK.touched=false;applyUser();render();if(lastF&&document.contains(lastF))lastF.focus()}
+function paintEdit(){
+  const h=H(edId),o=EDIT.h[edId]||{},u=U();
+  sheet.innerHTML=`<h2 id="edTitle">撮影用設定</h2><p class="help">画面に映したい内容に合わせて、サイト名・宿名・料金・写真を変えられます。この端末のブラウザに保存されます。</p>
+  <div class="ed"><div class="fld"><label for="edSite">サイト名</label><input id="edSite" value="${esc(EDIT.site||'ゆきたび')}" maxlength="14"></div>
+  <div style="display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:8px"><label class="chk"><input type="checkbox" id="edUOn"${u.on?' checked':''}><span>ログイン済みの状態で表示する<br><small style="color:var(--muted)">右上に会員名とポイントが出て、予約画面の入力欄も会員情報で埋まります。外すと未ログインの表示になります。</small></span></label>
+   <div class="row2"><div class="fld"><label for="edUN">会員のお名前</label><input id="edUN" value="${esc(u.name)}" maxlength="16"></div><div class="fld"><label for="edUK">フリガナ</label><input id="edUK" value="${esc(u.kana)}" maxlength="24"></div></div>
+   <div class="row2"><div class="fld"><label for="edUT">電話番号</label><input id="edUT" value="${esc(u.tel)}" maxlength="16"></div><div class="fld"><label for="edUM">メールアドレス</label><input id="edUM" value="${esc(u.mail)}" maxlength="40"></div></div>
+   <div class="fld"><label for="edUP">ポイント</label><input id="edUP" type="number" min="0" step="10" value="${+u.points||0}"></div></div>
+  <div class="fld"><label for="edH">変更する宿</label><select id="edH">${BASE.map(b=>`<option value="${b.id}"${b.id===edId?' selected':''}>${esc(H(b.id).name)}</option>`).join('')}</select></div>
+  <div class="row2"><div class="fld"><label for="edName">宿名</label><input id="edName" value="${esc(h.name)}"></div><div class="fld"><label for="edArea">温泉地</label><input id="edArea" value="${esc(h.area)}"></div></div>
+  <div class="row2"><div class="fld"><label for="edPrice">料金（1泊2食・大人1名・円）</label><input id="edPrice" type="number" min="1000" step="100" value="${h.price}"></div><div class="fld"><label for="edRate">評価（1〜5）</label><input id="edRate" type="number" min="1" max="5" step="0.1" value="${h.rating}"></div></div>
+  <div class="fld"><label for="edRev">クチコミ件数</label><input id="edRev" type="number" min="1" step="1" value="${h.reviews}"></div>
+  <div><span class="sub">ホームの写真（トップ画像と、冬の温泉特集の4枚）</span><div class="ph4 ph5">${HOME_LABEL.map((lb,k)=>`<div class="slot"><div class="pv">${homePic(k,k===0?sceneOutside('home-hero','day',{sink:.18,big:true}):pic(H(['ginzan','kinosaki','okuhida','zao'][k-1]),0))}</div><label for="edHp${k}">${lb}</label><input id="edHp${k}" type="file" accept="image/*" data-hp="${k}">${homeUrl(k)?`<button type="button" data-hdel="${k}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`).join('')}</div></div>
+  <div><span class="sub">宿の写真（上で選んだ宿。ホームの「今週の人気の宿」と宿のページに使われます）</span><div class="ph4">${[0,1,2,3].map(i=>`<div class="slot"><div class="pv">${pic(h,i)}</div><label for="edP${i}">${PH_LABEL[i]}を選ぶ</label><input id="edP${i}" type="file" accept="image/*" data-p="${i}">${photos[edId]&&photos[edId][i]?`<button type="button" data-pdel="${i}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`).join('')}</div></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between"><button type="button" class="btn ghost sm" id="edReset">この宿を初期状態に戻す</button><button type="button" class="btn blue sm" id="edClose">閉じる</button></div></div>`;
+}
+sheet.addEventListener('input',e=>{
+  const id=e.target.id;
+  if(id==='edSite'){EDIT.site=e.target.value;applySite();applyUser();saveEdit();return}
+  const um={edUN:'name',edUK:'kana',edUT:'tel',edUM:'mail',edUP:'points'};
+  if(um[id]){EDIT.user=Object.assign(U(),{[um[id]]:id==='edUP'?Math.max(0,+e.target.value||0):e.target.value});saveEdit();applyUser();return}
+  const map={edName:'name',edArea:'area',edPrice:'price',edRate:'rating',edRev:'reviews'};
+  if(map[id]){const o=EDIT.h[edId]||(EDIT.h[edId]={});o[map[id]]=e.target.value;saveEdit()}
+});
+sheet.addEventListener('change',e=>{
+  if(e.target.id==='edH'){edId=e.target.value;paintEdit();return}
+  if(e.target.id==='edUOn'){EDIT.user=Object.assign(U(),{on:e.target.checked});saveEdit();applyUser();return}
+  const hp=e.target.dataset.hp;if(hp!=null&&e.target.files&&e.target.files[0]){readHome(e.target.files[0],+hp);return}
+  const i=e.target.dataset.p;if(i!=null&&e.target.files&&e.target.files[0])readPhoto(e.target.files[0],+i)
+});
+sheet.addEventListener('click',e=>{
+  if(e.target.closest('#edClose')){closeEdit();return}
+  if(e.target.closest('#edReset')){delete EDIT.h[edId];delete photos[edId];saveEdit();store.set('yukitabi-photos-v1',photos);paintEdit();return}
+  const hd=e.target.closest('[data-hdel]');if(hd){if(photos._home){const nx=photos._home.slice();nx[+hd.dataset.hdel]=null;const all=Object.assign({},photos,{_home:nx});store.set('yukitabi-photos-v1',all);photos=all}paintEdit();return}
+  const d=e.target.closest('[data-pdel]');if(d){if(photos[edId]){photos[edId][+d.dataset.pdel]=null;store.set('yukitabi-photos-v1',photos)}paintEdit()}
+});
+function readHome(file,k){
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{const max=k===0?1800:960,k2=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k2);c.height=Math.round(img.height*k2);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+    const data=c.toDataURL('image/jpeg',k===0?.8:.74),prev=photos._home?photos._home.slice():[null,null,null,null,null];prev[k]=data;const next=Object.assign({},photos,{_home:prev});
+    if(store.set('yukitabi-photos-v1',next)){photos=next;paintEdit()}else toast('容量がいっぱいです。他の写真を戻してください')};
+  img.onerror=()=>{URL.revokeObjectURL(url);toast('画像を読み込めませんでした')};
+  img.src=url;
+}
+function readPhoto(file,i){
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{const max=960,k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+    const data=c.toDataURL('image/jpeg',.74),prev=photos[edId]?photos[edId].slice():[null,null,null,null];prev[i]=data;const next=Object.assign({},photos,{[edId]:prev});
+    if(store.set('yukitabi-photos-v1',next)){photos=next;paintEdit()}else toast('容量がいっぱいです。他の写真を戻してください')};
+  img.onerror=()=>{URL.revokeObjectURL(url);toast('画像を読み込めませんでした')};
+  img.src=url;
+}
+
+/* ---------- boot ---------- */
+applySite();applyUser();render();
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const m=$('#meMenu');if(m&&!m.hidden){m.hidden=true;$('#hdMe').setAttribute('aria-expanded','false');$('#hdMe').focus()}}});
+window.__yt={S,H,plans,render};
+})();
+</script>
