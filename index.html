@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <title>ゆきたび</title>
+<meta name="description" content="ドラマ撮影の小道具として作られた架空の宿泊予約サイトです。実在のサービスではありません。">
+<meta name="robots" content="noindex">
+<!-- 架空サイト(撮影用の小道具)。予約・会員情報はどこにも送信されず、ブラウザの外には出ません。 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
@@ -80,7 +83,7 @@ label.chk input{margin-top:3px;flex:none}
 .hero.hasph .art::after{background:linear-gradient(90deg,rgba(8,25,60,.6),rgba(8,25,60,.28) 62%,rgba(8,25,60,.1)),linear-gradient(180deg,rgba(8,25,60,.22),rgba(8,25,60,0) 55%)}
 .hero .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,30,70,.35),rgba(10,30,70,.1) 60%,rgba(10,30,70,.25))}
 .hero .wrap{padding-block:36px 40px}
-.hero h1{text-wrap:balance;font-size:clamp(24px,4.4vw,38px);font-weight:700;line-height:1.4;text-shadow:0 2px 14px rgba(8,25,60,.5)}
+.hero h1{text-wrap:balance;font-size:clamp(21px,5.6vw,38px);font-weight:700;line-height:1.4;text-shadow:0 2px 14px rgba(8,25,60,.5)}
 .hero p.lead{margin-top:6px;font-size:15px;text-shadow:0 1px 10px rgba(8,25,60,.5)}
 .sbox{margin-top:22px;background:var(--surface);color:var(--ink);border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(8,25,60,.25)}
 .sgrid{display:grid;grid-template-columns:1.5fr 1.1fr .7fr .8fr auto;gap:10px;align-items:end}
@@ -191,7 +194,8 @@ label.chk input{margin-top:3px;flex:none}
 
 footer{margin-top:40px;background:#fff;border-top:1px solid var(--line);padding-block:22px 28px;color:var(--muted);font-size:12px}
 footer .wrap{display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center}
-footer button{background:none;border:0;color:#98A2B3;font-size:11.5px;padding:2px 4px;text-decoration:underline}
+footer .wrap{position:relative}
+footer #editBtn{position:absolute;left:0;top:-14px;bottom:-14px;width:max(88px,calc(16px + env(safe-area-inset-left,0px) + 72px));opacity:0;border:0;background:none;padding:0;cursor:default;-webkit-tap-highlight-color:transparent}
 
 /* edit panel */
 .ov{position:fixed;inset:0;z-index:100;background:rgba(10,20,40,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));overflow-y:auto}
@@ -271,7 +275,7 @@ footer button{background:none;border:0;color:#98A2B3;font-size:11.5px;padding:2p
 
 <main id="app"></main>
 
-<footer><div class="wrap"><span id="foot">© ゆきたび　このサイトは架空のサービスです。</span><button type="button" id="editBtn">撮影用設定</button></div></footer>
+<footer><div class="wrap"><span id="foot">© ゆきたび</span><button type="button" id="editBtn" tabindex="-1" aria-hidden="true"></button></div></footer>
 
 <div class="ov" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="edTitle"></div></div>
 <div class="toast" id="toast" hidden></div>
@@ -575,17 +579,17 @@ document.addEventListener('click',e=>{
   if(t.closest('#resetF')){FL={tag:'',max:'',sort:'rec'};S.area='';saveS();viewList();return}
   const gl=t.closest('[data-gal]');if(gl){const i=+gl.dataset.gal,h=H(parse().id);$('#galBig').innerHTML=pic(h,i,{big:true})+`<span class="cap" id="galCap">${PH_LABEL[i]}</span>`;$$('[data-gal]').forEach(b=>b.setAttribute('aria-current',String(b===gl)));return}
   const gp=t.closest('[data-go="plans"]');if(gp){e.preventDefault();$('#plans').scrollIntoView({block:'start'});return}
-  if(t.closest('#editBtn')){openEdit();return}
+  if(t.closest('#editBtn')){const n=Date.now();tapN=(n-tapT<900)?tapN+1:1;tapT=n;if(tapN>=3){tapN=0;openEdit()}return}
   if(t===$('#ov'))closeEdit();
 });
 document.addEventListener('change',e=>{if(e.target.id==='fSort'){FL.sort=e.target.value;viewList()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeEdit()});
 
 /* ---------- 撮影用設定 ---------- */
-const ov=$('#ov'),sheet=$('#sheet');let edId=BASE[0].id,lastF=null;
+const ov=$('#ov'),sheet=$('#sheet');let edId=BASE[0].id,lastF=null,tapN=0,tapT=0;
 function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
 function saveEdit(){if(!store.set('yukitabi-v1',EDIT))toast('保存できませんでした')}
-function applySite(){$('#siteName').textContent=EDIT.site||'ゆきたび';$('#foot').textContent='© '+(EDIT.site||'ゆきたび')+'　このサイトは架空のサービスです。'}
+function applySite(){$('#siteName').textContent=EDIT.site||'ゆきたび';$('#foot').textContent='© '+(EDIT.site||'ゆきたび')}
 function openEdit(){lastF=document.activeElement;paintEdit();ov.hidden=false;document.documentElement.style.overflow='hidden';const f=$('#edSite');f&&f.focus()}
 function closeEdit(){if(ov.hidden)return;ov.hidden=true;document.documentElement.style.overflow='';sheet.innerHTML='';BK.touched=false;applyUser();render();if(lastF&&document.contains(lastF))lastF.focus()}
 function paintEdit(){
@@ -602,7 +606,8 @@ function paintEdit(){
   <div class="fld"><label for="edRev">クチコミ件数</label><input id="edRev" type="number" min="1" step="1" value="${h.reviews}"></div>
   <div><span class="sub">ホームの写真（トップ画像と、冬の温泉特集の4枚）</span><div class="ph4 ph5">${HOME_LABEL.map((lb,k)=>`<div class="slot"><div class="pv">${homePic(k,k===0?sceneOutside('home-hero','day',{sink:.18,big:true}):pic(H(['ginzan','kinosaki','okuhida','zao'][k-1]),0))}</div><label for="edHp${k}">${lb}</label><input id="edHp${k}" type="file" accept="image/*" data-hp="${k}">${homeUrl(k)?`<button type="button" data-hdel="${k}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`).join('')}</div></div>
   <div><span class="sub">宿の写真（上で選んだ宿。ホームの「今週の人気の宿」と宿のページに使われます）</span><div class="ph4">${[0,1,2,3].map(i=>`<div class="slot"><div class="pv">${pic(h,i)}</div><label for="edP${i}">${PH_LABEL[i]}を選ぶ</label><input id="edP${i}" type="file" accept="image/*" data-p="${i}">${photos[edId]&&photos[edId][i]?`<button type="button" data-pdel="${i}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`).join('')}</div></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between"><button type="button" class="btn ghost sm" id="edReset">この宿を初期状態に戻す</button><button type="button" class="btn blue sm" id="edClose">閉じる</button></div></div>`;
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between"><button type="button" class="btn ghost sm" id="edReset">この宿を初期状態に戻す</button><button type="button" class="btn blue sm" id="edClose">閉じる</button></div>
+  <p class="help" style="margin:2px 0 0">この設定画面は、ページの一番下（スクロールして最後）の<b>左下</b>を素早く3回タップするか、URLの末尾に <b>?edit</b> を付けて開くと表示されます。</p></div>`;
 }
 sheet.addEventListener('input',e=>{
   const id=e.target.id;
@@ -643,6 +648,7 @@ function readPhoto(file,i){
 
 /* ---------- boot ---------- */
 applySite();applyUser();render();
+if(/[?&]edit(?:[=&]|$)/.test(location.search))openEdit();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const m=$('#meMenu');if(m&&!m.hidden){m.hidden=true;$('#hdMe').setAttribute('aria-expanded','false');$('#hdMe').focus()}}});
 window.__yt={S,H,plans,render};
 })();
