@@ -28,7 +28,7 @@
 *{box-sizing:border-box}
 html{scroll-behavior:auto}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.7;-webkit-text-size-adjust:100%}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:70}
+body::before{content:"";position:fixed;top:0;right:0;left:0;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:70}
 h1,h2,h3,h4,p,ul{margin:0}
 ul{padding:0;list-style:none}
 a{color:inherit;text-decoration:none}
@@ -83,11 +83,11 @@ label.chk input{margin-top:3px;flex:none}
 
 /* home */
 .hero{position:relative;isolation:isolate;background:#8fbbe0;color:#fff}
-.hero .art{position:absolute;inset:0;z-index:-1}
+.hero .art{position:absolute;top:0;right:0;bottom:0;left:0;z-index:-1}
 .hero .art svg,.hero .art img{width:100%;height:100%;display:block}
 .hero .art img{object-fit:cover}
 .hero.hasph .art::after{background:linear-gradient(90deg,rgba(8,25,60,.6),rgba(8,25,60,.28) 62%,rgba(8,25,60,.1)),linear-gradient(180deg,rgba(8,25,60,.22),rgba(8,25,60,0) 55%)}
-.hero .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,30,70,.35),rgba(10,30,70,.1) 60%,rgba(10,30,70,.25))}
+.hero .art::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,rgba(10,30,70,.35),rgba(10,30,70,.1) 60%,rgba(10,30,70,.25))}
 .hero .wrap{padding-block:36px 40px}
 .hero h1{text-wrap:balance;font-size:clamp(21px,5.6vw,38px);font-weight:700;line-height:1.4;text-shadow:0 2px 14px rgba(8,25,60,.5)}
 .hero p.lead{margin-top:6px;font-size:15px;text-shadow:0 1px 10px rgba(8,25,60,.5)}
@@ -99,10 +99,10 @@ label.chk input{margin-top:3px;flex:none}
 .sec h2::before{content:"";width:5px;height:20px;border-radius:3px;background:var(--brand)}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .tile{position:relative;border-radius:10px;overflow:hidden;min-height:128px;display:flex;align-items:flex-end;color:#fff;background:#24407a;border:0;padding:0;text-align:left;isolation:isolate}
-.tile .art{position:absolute;inset:0;z-index:-1}
+.tile .art{position:absolute;top:0;right:0;bottom:0;left:0;z-index:-1}
 .tile .art svg,.tile .art img{width:100%;height:100%;display:block}
 .tile .art img{object-fit:cover}
-.tile .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.65))}
+.tile .art::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.65))}
 .tile b{display:block;padding:10px 12px;font-size:15px;line-height:1.45}
 .areas{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .areas button{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 8px;text-align:left;line-height:1.4}
@@ -136,7 +136,7 @@ label.chk input{margin-top:3px;flex:none}
 .fbar .sp{margin-left:auto}
 .hc{display:grid;grid-template-columns:300px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px}
 .hc .ph{position:relative;display:block;min-height:210px;background:#d9e3f0}
-.hc .ph svg,.hc .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hc .ph svg,.hc .ph img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;display:block}
 .hc .bd{padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:8px 18px;min-width:0}
 .hc h3{font-size:18px;font-weight:700;line-height:1.45;color:var(--brand-d)}
 .hc .sub{color:var(--muted);font-size:12.5px}
@@ -155,11 +155,11 @@ label.chk input{margin-top:3px;flex:none}
 /* detail */
 .gal{display:grid;grid-template-columns:2fr 1fr;gap:6px;border-radius:10px;overflow:hidden}
 .gal .big{aspect-ratio:16/10;position:relative;background:#d9e3f0}
-.gal .big svg,.gal .big img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.gal .big svg,.gal .big img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;display:block}
 .gal .th{display:grid;grid-template-rows:repeat(4,1fr);gap:6px}
 .gal .th button{position:relative;border:0;padding:0;background:#d9e3f0;overflow:hidden;min-height:60px}
 .gal .th button[aria-current="true"]{outline:3px solid var(--brand);outline-offset:-3px}
-.gal .th svg,.gal .th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.gal .th svg,.gal .th img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;display:block}
 .gal .cap{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11.5px;padding:0 8px;border-radius:4px;z-index:2}
 .dh{padding-block:14px 8px;display:grid;gap:4px}
 .dh h1{font-size:25px;font-weight:700;line-height:1.4}
@@ -204,9 +204,13 @@ footer .wrap{position:relative}
 footer #editBtn{position:absolute;left:0;top:-14px;bottom:-14px;width:max(88px,calc(16px + env(safe-area-inset-left,0px) + 72px));opacity:0;border:0;background:none;padding:0;cursor:default;-webkit-tap-highlight-color:transparent}
 
 /* edit panel */
-.ov{position:fixed;inset:0;z-index:100;background:rgba(10,20,40,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));overflow-y:auto}
+.ov{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;background:rgba(10,20,40,.55);display:block;padding:12px 12px 0;padding-top:max(12px,env(safe-area-inset-top,0px));overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.ov::after{content:"";display:block;height:28px;height:calc(28px + env(safe-area-inset-bottom,0px))}
 .ov[hidden]{display:none}
-.sheet{background:#fff;border-radius:14px;max-width:640px;width:100%;margin:auto;padding:18px 18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.sheet{background:#fff;border-radius:14px;max-width:640px;width:100%;margin:0 auto;padding:18px 18px 20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.shh{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;margin:-18px -18px 8px;padding:10px 18px;border-radius:14px 14px 0 0;border-bottom:1px solid var(--line)}
+.shh h2{margin:0}
+.sheet:focus,.sheet:focus-visible{outline:0}
 .sheet h2{font-size:18px;margin-bottom:4px}
 .sheet .help{font-size:12.5px;color:var(--muted);margin-bottom:12px}
 .ed{display:grid;gap:12px}
@@ -596,11 +600,14 @@ const ov=$('#ov'),sheet=$('#sheet');let edId=BASE[0].id,lastF=null,tapN=0,tapT=0
 function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
 function saveEdit(){if(!store.set('yukitabi-v1',EDIT))toast('保存できませんでした')}
 function applySite(){$('#siteName').textContent=EDIT.site||'ゆきたび';$('#foot').textContent='© '+(EDIT.site||'ゆきたび')}
-function openEdit(){lastF=document.activeElement;paintEdit();ov.hidden=false;document.documentElement.style.overflow='hidden';const f=$('#edSite');f&&f.focus()}
+function openEdit(){lastF=document.activeElement;paintEdit();ov.hidden=false;ov.scrollTop=0;document.documentElement.style.overflow='hidden';sheet.setAttribute('tabindex','-1');try{sheet.focus({preventScroll:true})}catch(_){}}
 function closeEdit(){if(ov.hidden)return;ov.hidden=true;document.documentElement.style.overflow='';sheet.innerHTML='';BK.touched=false;applyUser();render();if(lastF&&document.contains(lastF))lastF.focus()}
 function paintEdit(){
+  const st=ov.hidden?0:ov.scrollTop;
   const h=H(edId),o=EDIT.h[edId]||{},u=U();
-  sheet.innerHTML=`<h2 id="edTitle">撮影用設定</h2><p class="help">画面に映したい内容に合わせて、サイト名・宿名・料金・写真を変えられます。この端末のブラウザに保存されます。</p>
+  const hsAll=allH(),rk5=hsAll.slice().sort((a,b)=>(b.rating*Math.log(b.reviews+10))-(a.rating*Math.log(a.reviews+10))).slice(0,5).map(x=>x.id),ord=rk5.concat(hsAll.map(x=>x.id).filter(id=>!rk5.includes(id)));
+  const covers=ord.map(id=>{const x=H(id),r=rk5.indexOf(id)+1,has=photos[id]&&photos[id][0];return `<div class="slot"><div class="pv">${pic(x,0)}</div><label for="edC_${id}">${r?'人気'+r+'位 ':''}${esc(x.name)}</label><input id="edC_${id}" type="file" accept="image/*" data-ho="${id}">${has?`<button type="button" data-hodel="${id}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`}).join('');
+  sheet.innerHTML=`<div class="shh"><h2 id="edTitle">撮影用設定</h2><button type="button" class="btn blue sm" id="edClose2">閉じる</button></div><p class="help">画面に映したい内容に合わせて、サイト名・宿名・料金・写真を変えられます。この端末のブラウザに保存されます。</p>
   <div class="ed"><div class="fld"><label for="edSite">サイト名</label><input id="edSite" value="${esc(EDIT.site||'ゆきたび')}" maxlength="14"></div>
   <div style="display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:8px"><label class="chk"><input type="checkbox" id="edUOn"${u.on?' checked':''}><span>ログイン済みの状態で表示する<br><small style="color:var(--muted)">右上に会員名とポイントが出て、予約画面の入力欄も会員情報で埋まります。外すと未ログインの表示になります。</small></span></label>
    <div class="row2"><div class="fld"><label for="edUN">会員のお名前</label><input id="edUN" value="${esc(u.name)}" maxlength="16"></div><div class="fld"><label for="edUK">フリガナ</label><input id="edUK" value="${esc(u.kana)}" maxlength="24"></div></div>
@@ -611,9 +618,11 @@ function paintEdit(){
   <div class="row2"><div class="fld"><label for="edPrice">料金（1泊2食・大人1名・円）</label><input id="edPrice" type="number" min="1000" step="100" value="${h.price}"></div><div class="fld"><label for="edRate">評価（1〜5）</label><input id="edRate" type="number" min="1" max="5" step="0.1" value="${h.rating}"></div></div>
   <div class="fld"><label for="edRev">クチコミ件数</label><input id="edRev" type="number" min="1" step="1" value="${h.reviews}"></div>
   <div><span class="sub">ホームの写真（トップ画像と、冬の温泉特集の4枚）</span><div class="ph4 ph5">${HOME_LABEL.map((lb,k)=>`<div class="slot"><div class="pv">${homePic(k,k===0?sceneOutside('home-hero','day',{sink:.18,big:true}):pic(H(['ginzan','kinosaki','okuhida','zao'][k-1]),0))}</div><label for="edHp${k}">${lb}</label><input id="edHp${k}" type="file" accept="image/*" data-hp="${k}">${homeUrl(k)?`<button type="button" data-hdel="${k}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`).join('')}</div></div>
-  <div><span class="sub">宿の写真（上で選んだ宿。ホームの「今週の人気の宿」と宿のページに使われます）</span><div class="ph4">${[0,1,2,3].map(i=>`<div class="slot"><div class="pv">${pic(h,i)}</div><label for="edP${i}">${PH_LABEL[i]}を選ぶ</label><input id="edP${i}" type="file" accept="image/*" data-p="${i}">${photos[edId]&&photos[edId][i]?`<button type="button" data-pdel="${i}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`).join('')}</div></div>
+  <div><span class="sub">全ての宿の外観写真（ホームの「今週の人気の宿」の5枚・宿の一覧・各宿のページに使われます。人気1〜5位がホームに出ます）</span><div class="ph4 hcov">${covers}</div></div>
+  <div><span class="sub">宿の写真（上で選んだ宿。ホームの「今週の人気の宿」と宿のページに使われます）</span><div class="ph4 hsel">${[0,1,2,3].map(i=>`<div class="slot"><div class="pv">${pic(h,i)}</div><label for="edP${i}">${PH_LABEL[i]}を選ぶ</label><input id="edP${i}" type="file" accept="image/*" data-p="${i}">${photos[edId]&&photos[edId][i]?`<button type="button" data-pdel="${i}">元に戻す</button>`:'<span style="height:18px"></span>'}</div>`).join('')}</div></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between"><button type="button" class="btn ghost sm" id="edReset">この宿を初期状態に戻す</button><button type="button" class="btn blue sm" id="edClose">閉じる</button></div>
   <p class="help" style="margin:2px 0 0">この設定画面は、ページの一番下（スクロールして最後）の<b>左下</b>を素早く3回タップするか、URLの末尾に <b>?edit</b> を付けて開くと表示されます。</p></div>`;
+  if(st)ov.scrollTop=st;
 }
 sheet.addEventListener('input',e=>{
   const id=e.target.id;
@@ -626,13 +635,15 @@ sheet.addEventListener('input',e=>{
 sheet.addEventListener('change',e=>{
   if(e.target.id==='edH'){edId=e.target.value;paintEdit();return}
   if(e.target.id==='edUOn'){EDIT.user=Object.assign(U(),{on:e.target.checked});saveEdit();applyUser();return}
+  const ho=e.target.dataset.ho;if(ho!=null&&e.target.files&&e.target.files[0]){readPhoto(e.target.files[0],0,ho);return}
   const hp=e.target.dataset.hp;if(hp!=null&&e.target.files&&e.target.files[0]){readHome(e.target.files[0],+hp);return}
   const i=e.target.dataset.p;if(i!=null&&e.target.files&&e.target.files[0])readPhoto(e.target.files[0],+i)
 });
 sheet.addEventListener('click',e=>{
-  if(e.target.closest('#edClose')){closeEdit();return}
+  if(e.target.closest('#edClose,#edClose2')){closeEdit();return}
   if(e.target.closest('#edReset')){delete EDIT.h[edId];delete photos[edId];saveEdit();store.set('yukitabi-photos-v1',photos);paintEdit();return}
   const hd=e.target.closest('[data-hdel]');if(hd){if(photos._home){const nx=photos._home.slice();nx[+hd.dataset.hdel]=null;const all=Object.assign({},photos,{_home:nx});store.set('yukitabi-photos-v1',all);photos=all}paintEdit();return}
+  const hx=e.target.closest('[data-hodel]');if(hx){const id=hx.dataset.hodel;if(photos[id]){photos[id][0]=null;store.set('yukitabi-photos-v1',photos)}paintEdit();return}
   const d=e.target.closest('[data-pdel]');if(d){if(photos[edId]){photos[edId][+d.dataset.pdel]=null;store.set('yukitabi-photos-v1',photos)}paintEdit()}
 });
 function readHome(file,k){
@@ -643,10 +654,10 @@ function readHome(file,k){
   img.onerror=()=>{URL.revokeObjectURL(url);toast('画像を読み込めませんでした')};
   img.src=url;
 }
-function readPhoto(file,i){
+function readPhoto(file,i,hid){hid=hid||edId;
   const url=URL.createObjectURL(file),img=new Image();
   img.onload=()=>{const max=960,k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
-    const data=c.toDataURL('image/jpeg',.74),prev=photos[edId]?photos[edId].slice():[null,null,null,null];prev[i]=data;const next=Object.assign({},photos,{[edId]:prev});
+    const data=c.toDataURL('image/jpeg',.74),prev=photos[hid]?photos[hid].slice():[null,null,null,null];prev[i]=data;const next=Object.assign({},photos,{[hid]:prev});
     if(store.set('yukitabi-photos-v1',next)){photos=next;paintEdit()}else toast('容量がいっぱいです。他の写真を戻してください')};
   img.onerror=()=>{URL.revokeObjectURL(url);toast('画像を読み込めませんでした')};
   img.src=url;
